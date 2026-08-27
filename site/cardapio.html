@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cardápio | La Jullia Massas</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍕</text></svg>">
+  <style>
+    .page-hero { background: var(--olive-leaf); padding: 120px 40px 60px; text-align: center; }
+    .page-hero h1 { font-family: 'Playfair Display', serif; font-size: 40px; color: #fff; margin-bottom: 8px; }
+    .page-hero p { color: var(--amber-gold); font-size: 15px; }
+    .page-hero .back-link { display: inline-flex; align-items: center; gap: 6px; color: var(--amber-gold); text-decoration: none; font-size: 14px; margin-bottom: 12px; transition: opacity 0.3s; }
+    .page-hero .back-link:hover { opacity: 0.7; }
+
+    .cardapio-main { max-width: 1200px; margin: 0 auto; padding: 40px 24px; }
+
+    .cardapio-tabs { display: flex; justify-content: center; gap: 15px; margin-bottom: 40px; flex-wrap: wrap; }
+    .cardapio-tab { padding: 14px 30px; background: #fff; border: 2px solid var(--olive-leaf); border-radius: 30px; font-family: 'Poppins', sans-serif; font-size: 14px; font-weight: 600; color: var(--olive-leaf); cursor: pointer; transition: all 0.3s; position: relative; overflow: hidden; }
+    .cardapio-tab::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent); transition: left 0.5s; }
+    .cardapio-tab:hover::before { left: 100%; }
+    .cardapio-tab:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(139,0,0,0.3); }
+    .cardapio-tab.active { background: var(--olive-leaf); color: #fff; }
+    .cardapio-tab .tab-emoji { margin-right: 8px; }
+
+    .cardapio-section { display: none; animation: fadeInUp 0.5s ease; }
+    .cardapio-section.active { display: block; }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+    .cardapio-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+    .cardapio-card { background: #fff; border-radius: 20px; padding: 24px; box-shadow: var(--shadow); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; overflow: hidden; }
+    .cardapio-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, var(--olive-leaf), var(--brick-ember)); transform: scaleX(0); transition: transform 0.4s; transform-origin: left; }
+    .cardapio-card:hover::before { transform: scaleX(1); }
+    .cardapio-card:hover { transform: translateY(-8px); box-shadow: var(--shadow-lg); }
+    .cardapio-card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+    .cardapio-card-icon { width: 50px; height: 50px; background: linear-gradient(135deg, var(--olive-leaf), var(--brick-ember)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
+    .cardapio-card:hover .cardapio-card-icon { transform: scale(1.2) rotate(-10deg); }
+    .cardapio-card-title { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--olive-leaf); font-weight: 700; }
+    .cardapio-card-desc { font-size: 13px; color: #777; line-height: 1.6; margin-bottom: 15px; }
+    .cardapio-card-price { display: inline-block; background: linear-gradient(135deg, var(--brick-ember), #1a6b1a); color: #fff; padding: 8px 20px; border-radius: 25px; font-size: 16px; font-weight: 700; transition: all 0.3s; }
+    .cardapio-card:hover .cardapio-card-price { transform: scale(1.05); }
+    .cardapio-card-tag { position: absolute; top: 15px; right: 15px; background: var(--amber-gold); color: var(--dark-text); padding: 4px 12px; border-radius: 15px; font-size: 11px; font-weight: 600; }
+    
+    .cardapio-card-add { display: flex; align-items: center; gap: 8px; margin-top: 15px; padding: 10px 20px; background: var(--brick-ember); color: #fff; border: none; border-radius: 25px; font-family: 'Poppins', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.3s; width: 100%; justify-content: center; }
+    .cardapio-card-add:hover { background: #1a6b1a; transform: scale(1.02); }
+    .cardapio-card-add.added { background: #28a745; }
+    .cardapio-card-add svg { width: 16px; height: 16px; fill: #fff; }
+
+    .cardapio-card-qty { display: flex; align-items: center; gap: 10px; margin-top: 15px; }
+    .qty-btn { width: 35px; height: 35px; border: 2px solid var(--olive-leaf); background: #fff; color: var(--olive-leaf); border-radius: 50%; font-size: 18px; font-weight: 700; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; }
+    .qty-btn:hover { background: var(--olive-leaf); color: #fff; }
+    .qty-value { font-size: 18px; font-weight: 700; color: var(--olive-leaf); min-width: 30px; text-align: center; }
+
+    /* CARRINHO */
+    .cart-float { position: fixed; bottom: 100px; right: 28px; width: 62px; height: 62px; background: linear-gradient(135deg, var(--brick-ember), #1a6b1a); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 25px rgba(139,0,0,0.4); z-index: 998; cursor: pointer; transition: all 0.4s; }
+    .cart-float:hover { transform: scale(1.1); }
+    .cart-float svg { width: 28px; height: 28px; fill: #fff; }
+    .cart-count { position: absolute; top: -5px; right: -5px; width: 24px; height: 24px; background: var(--amber-gold); color: var(--dark-text); border-radius: 50%; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+    .cart-count.empty { display: none; }
+
+    /* SIDEBAR CARRINHO */
+    .cart-sidebar { position: fixed; top: 0; right: -400px; width: 380px; height: 100%; background: #fff; box-shadow: -5px 0 30px rgba(0,0,0,0.2); z-index: 2000; transition: right 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; flex-direction: column; }
+    .cart-sidebar.open { right: 0; }
+    .cart-header { padding: 20px; background: var(--olive-leaf); color: #fff; display: flex; align-items: center; justify-content: space-between; }
+    .cart-header h3 { font-family: 'Playfair Display', serif; font-size: 20px; }
+    .cart-close { background: rgba(255,255,255,0.2); border: none; color: #fff; width: 35px; height: 35px; border-radius: 50%; font-size: 20px; cursor: pointer; transition: all 0.3s; }
+    .cart-close:hover { background: var(--brick-ember); transform: rotate(90deg); }
+    .cart-items { flex: 1; overflow-y: auto; padding: 20px; }
+    .cart-item { display: flex; align-items: center; gap: 12px; padding: 12px; background: #f9f9f9; border-radius: 12px; margin-bottom: 10px; animation: slideIn 0.3s ease; }
+    @keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+    .cart-item-icon { width: 40px; height: 40px; background: linear-gradient(135deg, var(--olive-leaf), var(--brick-ember)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+    .cart-item-info { flex: 1; }
+    .cart-item-name { font-weight: 600; font-size: 14px; color: var(--dark-text); }
+    .cart-item-price { font-size: 12px; color: var(--brick-ember); font-weight: 600; }
+    .cart-item-qty { display: flex; align-items: center; gap: 5px; }
+    .cart-item-qty button { width: 28px; height: 28px; border: 1px solid #ddd; background: #fff; border-radius: 50%; font-size: 14px; cursor: pointer; transition: all 0.2s; }
+    .cart-item-qty button:hover { background: var(--brick-ember); color: #fff; border-color: var(--brick-ember); }
+    .cart-item-qty span { font-weight: 700; min-width: 20px; text-align: center; }
+    .cart-item-remove { background: none; border: none; color: #999; cursor: pointer; font-size: 18px; transition: color 0.3s; }
+    .cart-item-remove:hover { color: var(--brick-ember); }
+    .cart-empty { text-align: center; padding: 40px 20px; color: #999; }
+    .cart-empty span { font-size: 60px; display: block; margin-bottom: 15px; }
+    .cart-footer { padding: 20px; border-top: 1px solid #eee; background: #f9f9f9; }
+    .cart-total { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+    .cart-total span:first-child { font-size: 16px; font-weight: 600; }
+    .cart-total span:last-child { font-size: 20px; font-weight: 700; color: var(--brick-ember); }
+    .cart-checkout { width: 100%; padding: 14px; background: linear-gradient(135deg, #25D366, #128C7E); color: #fff; border: none; border-radius: 30px; font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px; }
+    .cart-checkout:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(37,211,102,0.4); }
+    .cart-checkout svg { width: 20px; height: 20px; fill: #fff; }
+
+    .cart-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1999; display: none; }
+    .cart-overlay.show { display: block; }
+
+    .cardapio-cta { text-align: center; margin-top: 50px; padding: 40px; background: linear-gradient(135deg, var(--olive-leaf), #2d5a1e); border-radius: 24px; color: #fff; position: relative; overflow: hidden; }
+    .cardapio-cta::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M20 20c0-5.5-4.5-10-10-10S0 14.5 0 20s4.5 10 10 10 10-4.5 10-10zm20 0c0-5.5-4.5-10-10-10s-10 4.5-10 10 4.5 10 10 10 10-4.5 10-10z'/%3E%3C/g%3E%3C/svg%3E"); }
+    .cardapio-cta h3 { font-family: 'Playfair Display', serif; font-size: 28px; margin-bottom: 10px; position: relative; }
+    .cardapio-cta p { font-size: 15px; opacity: 0.9; margin-bottom: 25px; position: relative; }
+    .cardapio-cta-btn { display: inline-flex; align-items: center; gap: 10px; padding: 16px 32px; background: var(--brick-ember); color: #fff; border-radius: 30px; font-size: 15px; font-weight: 600; text-decoration: none; transition: all 0.3s; position: relative; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+    .cardapio-cta-btn:hover { background: #1a6b1a; transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.3); }
+
+    .cardapio-feature { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; margin-top: 50px; }
+    .cardapio-feature-item { text-align: center; padding: 30px 20px; background: #fff; border-radius: 20px; box-shadow: var(--shadow); transition: all 0.4s; }
+    .cardapio-feature-item:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); }
+    .cardapio-feature-icon { font-size: 40px; margin-bottom: 15px; display: inline-block; transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
+    .cardapio-feature-item:hover .cardapio-feature-icon { transform: scale(1.2) rotate(-5deg); }
+    .cardapio-feature-item h4 { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--olive-leaf); margin-bottom: 8px; }
+    .cardapio-feature-item p { font-size: 13px; color: #777; line-height: 1.6; }
+
+    @media (max-width: 900px) {
+      .cardapio-feature { grid-template-columns: 1fr; }
+      .cardapio-tabs { gap: 10px; }
+      .cardapio-tab { padding: 10px 20px; font-size: 13px; }
+      .cart-sidebar { width: 100%; right: -100%; }
+    }
+    @media (max-width: 500px) {
+      .cardapio-grid { grid-template-columns: 1fr; }
+      .cardapio-cta h3 { font-size: 22px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="preloader">
+    <div class="preloader-pizza">📋</div>
+    <div class="preloader-text">CARDÁPIO</div>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav class="navbar" id="navbar">
+    <a href="index.html" class="nav-logo">
+      <img src="imagens/logo.png" alt="La Jullia Massas">
+      <div class="nav-logo-text">La Jullia<span>Massas</span></div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html#inicio">Início</a></li>
+      <li><a href="cardapio.html" class="active">Cardápio</a></li>
+      <li><a href="portfolio.html">Portfólio</a></li>
+      <li><a href="index.html#sobre">Sobre</a></li>
+      <li><a href="index.html#contato">Contato</a></li>
+    </ul>
+    <a href="https://wa.me/5583996965591" target="_blank" class="nav-whatsapp">
+      <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      WhatsApp
+    </a>
+    <button class="nav-hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- HEADER -->
+  <div class="page-hero">
+    <a href="index.html" class="back-link">← Voltar ao início</a>
+    <h1>📋 Nosso Cardápio</h1>
+    <p>Sabores, tamanhos e preços.</p>
+  </div>
+
+  <!-- MAIN -->
+  <main class="cardapio-main">
+
+    <!-- TABS -->
+    <div class="cardapio-tabs">
+      <button class="cardapio-tab active" data-tab="massas">
+        <span class="tab-emoji">🍝</span>Massas
+      </button>
+      <button class="cardapio-tab" data-tab="pacotes">
+        <span class="tab-emoji">📦</span>Pacotes
+      </button>
+      <button class="cardapio-tab" data-tab="pre-assadas">
+        <span class="tab-emoji">🍕</span>Pizzas Pré-Assadas
+      </button>
+      <button class="cardapio-tab" data-tab="aniversario">
+        <span class="tab-emoji">🎂</span>Aniversário
+      </button>
+    </div>
+
+    <!-- MASSAS UNIDADE -->
+    <section class="cardapio-section active" id="massas">
+      <div class="cardapio-grid">
+        <div class="cardapio-card" data-name="Massa Gigante" data-price="7.00" data-icon="🍕">
+          <span class="cardapio-tag">UNIDADE</span>
+          <div class="cardapio-card-header">
+            <div class="cardapio-card-icon">🍕</div>
+            <div class="cardapio-card-title">Gigante</div>
+          </div>
+          <div class="cardapio-card-desc">A unidade pronta, ideal para ocasiões especiais.</div>
+          <div class="cardapio-card-price">R$ 7,00</div>
+          <button class="cardapio-card-add" onclick="addToCart(this)">+ Adicionar</button>
+        </div>
+        <div class="cardapio-card" data-name="Massa Família" data-price="5.00" data-icon="🍕">
+          <span class="cardapio-tag">UNIDADE</span>
+          <div class="cardapio-card-header">
+            <div class="cardapio-card-icon">🍕</div>
+            <div class="cardapio-card-title">Família</div>
+          </div>
+          <div class="cardapio-card-desc">A unidade pronta, perfeita para a família.</div>
+          <div class="cardapio-card-price">R$ 5,00</div>
+          <button class="cardapio-card-add" onclick="addToCart(this)">+ Adicionar</button>
+        </div>
+        <div class="cardapio-card" data-name="Massa Média" data-price="4.50" data-icon="🍕">
+          <span class="cardapio-tag">UNIDADE</span>
+          <div class="cardapio-card-header">
+            <div class="cardapio-card-icon">🍕</div>
+            <div class="cardapio-card-title">Média</div>
+          </div>
+          <div class="cardapio-card-desc">A unidade pronta, tamanho intermediário.</div>
+          <div class="cardapio-card-price">R$ 4,50</div>
+          <button class="cardapio-card-add" onclick="addToCart(this)">+ Adicionar</button>
+        </div>
+        <div class="cardapio-card" data-name="Massa Pequena" data-price="4.00" data-icon="🍕">
+          <span class="cardapio-tag">UNIDADE</span>
+          <div class="cardapio-card-header">
+            <div class="cardapio-card-icon">🍕</div>
+            <div class="cardapio-card-title">Pequena</div>
+          </div>
+          <div class="cardapio-card-desc">A unidade pronta, para porções individuais.</div>
+          <div class="cardapio-card-price">R$ 4,00</div>
+          <button class="cardapio-card-add" onclick="addToCart(this)">+ Adicionar</button>
+        </div>
+        <div class="cardapio-card" data-name="Massa Broto" data-price="3.00" data-icon="🍕">
+          <span class="cardapio-tag">UNIDADE</span>
+          <div class="cardapio-card-header">
+            <div class="cardapio-card-icon">🍕</div>
+            <div class="cardapio-card-title">Broto</div>
+          </div>
+          <div class="cardapio-card-desc">A unidade pronta, compacta e saborosa.</div>
+          <div class="cardapio-card-price">R$ 3,00</div>
+          <button class="cardapio-card-add" onclick="addToCart(this)">+ Adicionar</button>
+        </div>
+        <div class="cardapio-card" data-name="Massa Matuta" data-price="2.50" data-icon="🍕">
+          <span class="cardapio-tag">UNIDADE</span>
+          <div class="cardapio-card-header">
+            <div class="cardapio-card-icon">🍕</div>
+            <div class="cardapio-card-title">Matuta</div>
+          </div>
+          <div class="cardapio-card-desc">A unidade pronta, tradição e sabor.</div>
+          <div class="cardapio-card-price">R$ 2,50</div>
+          <button class="cardapio-card-add" onclick="addToCart(this)">+ Adicionar</button>
+        </div>
+        <div class="cardapio-card" data-name="Massa Lanche" data-price="2.00" data-icon="🍕">
+          <span class="cardapio-tag">UNIDADE</span>
+          <div class="cardapio-card-header">
+            <div class="cardapio-card-icon">🍕</div>
+            <div class="cardapio-card-title">Lanche</div>
+          </div>
+          <div class="cardapio-card-desc">A unidade pronta, ideal para lanches rápidos.</div>
+          <div class="cardapio-card-price">R$ 2,00</div>
+          <button class="cardapio-card-add" onclick="addToCart(this)">+ Adicionar</button>
+        </div>
+        <div class="cardapio-card" data-name="Massa Mini (20 un)" data-price="2.00" data-icon="🍕">
+          <span class="cardapio-tag">UNIDADE</span>
+          <div class="cardapio-card-header">
+            <div class="cardapio-card-icon">🍕</div>
+            <div class="cardapio-card-title">Mini (20 un)</div>
+          </div>
+          <div class="cardapio-card-desc">A unidade pronta, perfeita para festas.</div>
+          <div class="cardapio-card-price">R$ 2,00</div>
+          <button class="cardapio-card-add" onclick="addToCart(this)">+ Adicionar</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- PACOTES -->
+    <section class="cardapio-section" id="pacotes">
+      <div class="cardapio-grid">
+        <div class="cardapio-card" data-name="Pacote Gigante" data-price="65.00" data-icon="📦">
+          <span class="cardapio-tag">PACOTE</span>
+          <div class="cardapio-card-header">
+            <div class="cardapio-card-icon">📦</div>
+            <div class="cardapio-card-title">Gigante</div>
+          </div>
+          <div class="cardapio-card-desc">Pacote com múltiplas unidades gigantes.</div>
+          <div class="cardapio-card-price">R$ 65,00</div>
+          <button class="cardapio-card-add" onclick="addToCart(this)">+ Adicionar</button>
+        </div>
+        <div class="cardapio-card" data-name="Pacote Família" data-price="45.00" data-icon="📦">
+          <span class="cardapio-tag">PACOTE</span>
+          <div class="cardapio-card-header">
+            <div class="cardapio-card-icon">📦</div>
+            <div class="cardapio-card-title">Família</div>
+          </div>
+          <div class="cardapio-card-desc">Pacote com múltiplas unidades família.</div>
+          <div class="cardapio-card-price">R$ 45,00</div>
+          <button class="cardapio-card-add" onclick="addToCart(this)">+ Adicionar</button>
+        </div>
+        <div class="cardapio-card" data-name="Pacote Média" data-price="40.00" data-icon="📦">
+          <span class="cardapio-tag">PACOTE</span>
+          <div class="cardapio-card-header">
+            <div class="cardapio-card-icon">📦</div>
+            <div class="cardapio-card-title">Média</div>
+          </div>
+          <div class="cardapio-card-desc">Pacote com múltiplas unidades médias.</div>
+          <div class="cardapio-card-price">R$ 40,00</div>
+          <button class="cardapio-card-add" onclick="addToCart(this)">+ Adicionar</button>
+        </div>
+        <div class="cardapio-card" data-name="Pacote Pequena" data-price="35.00" data-icon="📦">
+          <span class="cardapio-tag">PACOTE</span>
+          <div class="cardapio-card-header">
+            <div class="cardapio-card-icon">📦</div>
+            <div class="cardapio-card-title">Pequena</div>
+          </div>
+          <div class="cardapio-card-desc">Pacote com múltiplas unidades pequenas.</div>
+          <div class="cardapio-card-price">R$ 35,00</div>
+          <button class="cardapio-card-add" onclick="addToCart(this)">+ Adicionar</button>
+        </div>
+        <div class="cardapio-card" data-name="Pacote Broto" data-price="25.00" data-icon="📦">
+          <span class="cardapio-tag">PACOTE</span>
+          <div class="cardapio-card-header">
+            <div class="cardapio-card-icon">📦</div>
+            <div class="cardapio-card-title">Broto</div>
+          </div>
+          <div class="cardapio-card-desc">Pacote com múltiplas unidades broto.</div>
+          <div class="cardapio-card-price">R$ 25,00</div>
+          <button class="cardapio-card-add" onclick="addToCart(this)">+ Adicionar</button>
+        </div>
+        <div class="cardapio-card" data-name="Pacote Matuta" data-price="20.00" data-icon="📦">
+          <span class="cardapio-tag">PACOTE</span>
+          <div class="cardapio-card-header">
+            <div class="cardapio-card-icon">📦</div>
+            <div class="cardapio-card-title">Matuta</div>
+          </div>
+          <div class="cardapio-card-desc">Pacote com múltiplas unidades matuta.</div>
+          <div class="cardapio-card-price">R$ 20,00</div>
+          <button class="cardapio-card-add" onclick="addToCart(this)">+ Adicionar</button>
+        </div>
+        <div class="cardapio-card" data-name="Pacote Lanche" data-price="15.00" data-icon="📦">
+          <span class="cardapio-tag">PACOTE</span>
+          <div class="cardapio-card-header">
+            <div class="cardapio-card-icon">📦</div>
+            <div class="cardapio-card-title">Lanche</div>
+          </div>
+          <div class="cardapio-card-desc">Pacote com múltiplas unidades lanche.</div>
+          <div class="cardapio-card-price">R$ 15,00</div>
+          <button class="cardapio-card-add" onclick="addToCart(this)">+ Adicionar</button>
+        </div>
+        <div class="cardapio-card" data-name="Pacote Mini (20 un)" data-price="25.00" data-icon="📦">
+          <span class="cardapio-tag">PACOTE</span>
+          <div class="cardapio-card-header">
+            <div class="cardapio-card-icon">📦</div>
+            <div class="cardapio-card-title">Mini (20 un)</div>
+          </div>
+          <div class="cardapio-card-desc">Pacote com 20 unidades mini.</div>
+          <div class="cardapio-card-price">R$ 25,00</div>
+          <button class="cardapio-card-add" onclick="addToCart(this)">+ Adicionar</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- PIZZAS PRÉ-ASSADAS -->
+    <section class="cardapio-section" id="pre-assadas">
+      <div class="cardapio-grid">
+        <div class="cardapio-card" data-name="Pré-Assada Aniversário" data-price="2.00" data-icon="🔥">
+          <span class="cardapio-tag">PRÉ-ASSADA</span>
+          <div class="cardapio-card-header">
+            <div class="cardapio-card-icon">🔥</div>
+            <div class="cardapio-card-title">Aniversário</div>
+          </div>
+          <div class="cardapio-card-desc">A unidade pronta, para sua festa.</div>
+          <div class="cardapio-card-price">R$ 2,00</div>
+          <button class="cardapio-card-add" onclick="addToCart(this)">+ Adicionar</button>
+        </div>
+        <div class="cardapio-card" data-name="Pré-Assada Mini" data-price="3.50" data-icon="🔥">
+          <span class="cardapio-tag">PRÉ-ASSADA</span>
+          <div class="cardapio-card-header">
+            <div class="cardapio-card-icon">🔥</div>
+            <div class="cardapio-card-title">Mini</div>
+          </div>
+          <div class="cardapio-card-desc">A unidade pronta, compacta e saborosa.</div>
+          <div class="cardapio-card-price">R$ 3,50</div>
+          <button class="cardapio-card-add" onclick="addToCart(this)">+ Adicionar</button>
+        </div>
+        <div class="cardapio-card" data-name="Pacote Pré-Assadas 5 un" data-price="15.00" data-icon="🔥">
+          <span class="cardapio-tag">PRÉ-ASSADA</span>
+          <div class="cardapio-card-header">
+            <div class="cardapio-card-icon">🔥</div>
+            <div class="cardapio-card-title">Pacote com 5 unidades</div>
+          </div>
+          <div class="cardapio-card-desc">5 unidades prontas, ótimo custo-benefício.</div>
+          <div class="cardapio-card-price">R$ 15,00</div>
+          <button class="cardapio-card-add" onclick="addToCart(this)">+ Adicionar</button>
+        </div>
+        <div class="cardapio-card" data-name="Pré-Assada Matuta" data-price="8.00" data-icon="🔥">
+          <span class="cardapio-tag">PRÉ-ASSADA</span>
+          <div class="cardapio-card-header">
+            <div class="cardapio-card-icon">🔥</div>
+            <div class="cardapio-card-title">Matuta</div>
+          </div>
+          <div class="cardapio-card-desc">A unidade pronta, tradição e sabor.</div>
+          <div class="cardapio-card-price">R$ 8,00</div>
+          <button class="cardapio-card-add" onclick="addToCart(this)">+ Adicionar</button>
+        </div>
+        <div class="cardapio-card" data-name="Pré-Assada Média" data-price="25.00" data-icon="🔥">
+          <span class="cardapio-tag">PRÉ-ASSADA</span>
+          <div class="cardapio-card-header">
+            <div class="cardapio-card-icon">🔥</div>
+            <div class="cardapio-card-title">Média</div>
+          </div>
+          <div class="cardapio-card-desc">A unidade pronta, tamanho intermediário.</div>
+          <div class="cardapio-card-price">R$ 25,00</div>
+          <button class="cardapio-card-add" onclick="addToCart(this)">+ Adicionar</button>
+        </div>
+        <div class="cardapio-card" data-name="Pré-Assada Família" data-price="30.00" data-icon="🔥">
+          <span class="cardapio-tag">PRÉ-ASSADA</span>
+          <div class="cardapio-card-header">
+            <div class="cardapio-card-icon">🔥</div>
+            <div class="cardapio-card-title">Família</div>
+          </div>
+          <div class="cardapio-card-desc">A unidade pronta, perfeita para a família.</div>
+          <div class="cardapio-card-price">R$ 30,00</div>
+          <button class="cardapio-card-add" onclick="addToCart(this)">+ Adicionar</button>
+        </div>
+        <div class="cardapio-card" data-name="Pré-Assada Gigante" data-price="40.00" data-icon="🔥">
+          <span class="cardapio-tag">PRÉ-ASSADA</span>
+          <div class="cardapio-card-header">
+            <div class="cardapio-card-icon">🔥</div>
+            <div class="cardapio-card-title">Gigante</div>
+          </div>
+          <div class="cardapio-card-desc">A unidade pronta, ideal para ocasiões especiais.</div>
+          <div class="cardapio-card-price">R$ 40,00</div>
+          <button class="cardapio-card-add" onclick="addToCart(this)">+ Adicionar</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ANIVERSÁRIO -->
+    <section class="cardapio-section" id="aniversario">
+      <div class="cardapio-grid">
+        <div class="cardapio-card" data-name="Cento da Massa (Aniversário)" data-price="70.00" data-icon="🎂">
+          <span class="cardapio-tag">ANIVERSÁRIO</span>
+          <div class="cardapio-card-header">
+            <div class="cardapio-card-icon">🎂</div>
+            <div class="cardapio-card-title">Cento da Massa</div>
+          </div>
+          <div class="cardapio-card-desc">Massa para festa de aniversário, quantidade especial.</div>
+          <div class="cardapio-card-price">R$ 70,00</div>
+          <button class="cardapio-card-add" onclick="addToCart(this)">+ Adicionar</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <div class="cardapio-cta">
+      <h3>🏍️ Fazemos Entrega!</h3>
+      <p>Faça seu pedido pelo WhatsApp e receba em casa.</p>
+      <a href="https://wa.me/5583996965591" target="_blank" class="cardapio-cta-btn">
+        <svg viewBox="0 0 24 24" style="fill:#fff;width:20px;height:20px;"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        FAÇA SEU PEDIDO
+      </a>
+    </div>
+
+    <!-- FEATURES -->
+    <div class="cardapio-feature">
+      <div class="cardapio-feature-item">
+        <div class="cardapio-feature-icon">🌾</div>
+        <h4>Massa de Qualidade</h4>
+        <p>Ingredientes selecionados para o melhor sabor.</p>
+      </div>
+      <div class="cardapio-feature-item">
+        <div class="cardapio-feature-icon">👨‍🍳</div>
+        <h4>Produção Artesanal</h4>
+        <p>Feito à mão com muito carinho.</p>
+      </div>
+      <div class="cardapio-feature-item">
+        <div class="cardapio-feature-icon">🚚</div>
+        <h4>Entrega Rápida</h4>
+        <p>Receba em casa com rapidez e segurança.</p>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="index.html" class="nav-logo">
+          <img src="imagens/logo.png" alt="La Jullia Massas">
+          <div class="nav-logo-text">La Jullia<span>Massas</span></div>
+        </a>
+        <p>Massas artesanais para pizzas irresistíveis.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Navegação</h4>
+        <ul>
+          <li><a href="index.html#inicio">Início</a></li>
+          <li><a href="cardapio.html">Cardápio</a></li>
+          <li><a href="portfolio.html">Portfólio</a></li>
+          <li><a href="index.html#sobre">Sobre</a></li>
+          <li><a href="index.html#contato">Contato</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Contato</h4>
+        <div class="footer-contact-item">
+          <svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+          <a href="https://wa.me/5583996965591" target="_blank">(83) 99696-5559</a>
+        </div>
+        <div class="footer-contact-item">
+          <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+          <a href="https://instagram.com/lajulliamassas" target="_blank">@lajulliamassas</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Onde Estamos</h4>
+        <div class="footer-contact-item">
+          <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+          <span>Rua Mamede Moises Raia, 241<br>Monte Castelo</span>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">&copy; 2026 La Jullia Massas. Todos os direitos reservados.</div>
+  </footer>
+
+  <!-- FLOATING WHATSAPP -->
+  <a href="https://wa.me/5583996965591" target="_blank" class="whatsapp-float" aria-label="WhatsApp">
+    <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+  </a>
+
+  <!-- CARRINHO FLUTUANTE -->
+  <div class="cart-float" id="cartFloat" onclick="openCart()">
+    <svg viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
+    <span class="cart-count empty" id="cartCount">0</span>
+  </div>
+
+  <!-- OVERLAY CARRINHO -->
+  <div class="cart-overlay" id="cartOverlay" onclick="closeCart()"></div>
+
+  <!-- SIDEBAR CARRINHO -->
+  <div class="cart-sidebar" id="cartSidebar">
+    <div class="cart-header">
+      <h3>🛒 Meu Pedido</h3>
+      <button class="cart-close" onclick="closeCart()">×</button>
+    </div>
+    <div class="cart-items" id="cartItems">
+      <div class="cart-empty" id="cartEmpty">
+        <span>🛒</span>
+        <p>Seu carrinho está vazio</p>
+        <p style="font-size:12px;margin-top:5px;">Adicione itens do cardápio</p>
+      </div>
+    </div>
+    <div class="cart-footer" id="cartFooter" style="display:none;">
+      <div class="cart-total">
+        <span>Total:</span>
+        <span id="cartTotal">R$ 0,00</span>
+      </div>
+      <button class="cart-checkout" onclick="checkoutWhatsApp()">
+        <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        FINALIZAR PELO WHATSAPP
+      </button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+    // Carrinho
+    var cart = [];
+
+    // Tabs do cardápio
+    var tabs = document.querySelectorAll('.cardapio-tab');
+    var sections = document.querySelectorAll('.cardapio-section');
+
+    tabs.forEach(function(tab) {
+      tab.addEventListener('click', function() {
+        tabs.forEach(function(t) { t.classList.remove('active'); });
+        sections.forEach(function(s) { s.classList.remove('active'); });
+        
+        tab.classList.add('active');
+        var targetId = tab.getAttribute('data-tab');
+        var targetSection = document.getElementById(targetId);
+        if (targetSection) {
+          targetSection.classList.add('active');
+        }
+      });
+    });
+
+    // Animação dos cards
+    var cardObserver = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry, index) {
+        if (entry.isIntersecting) {
+          setTimeout(function() {
+            entry.target.style.opacity = '1';
+            entry.target.style.transform = 'translateY(0)';
+          }, index * 100);
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.cardapio-card').forEach(function(card) {
+      card.style.opacity = '0';
+      card.style.transform = 'translateY(30px)';
+      card.style.transition = 'all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)';
+      cardObserver.observe(card);
+    });
+
+    // Adicionar ao carrinho
+    function addToCart(btn) {
+      var card = btn.closest('.cardapio-card');
+      var name = card.getAttribute('data-name');
+      var price = parseFloat(card.getAttribute('data-price'));
+      var icon = card.getAttribute('data-icon');
+
+      var existingItem = cart.find(function(item) { return item.name === name; });
+      if (existingItem) {
+        existingItem.qty++;
+      } else {
+        cart.push({ name: name, price: price, icon: icon, qty: 1 });
+      }
+
+      // Animação no botão
+      btn.classList.add('added');
+      btn.textContent = '✓ Adicionado';
+      setTimeout(function() {
+        btn.classList.remove('added');
+        btn.textContent = '+ Adicionar';
+      }, 1000);
+
+      updateCartUI();
+    }
+
+    // Atualizar UI do carrinho
+    function updateCartUI() {
+      var cartItems = document.getElementById('cartItems');
+      var cartCount = document.getElementById('cartCount');
+      var cartTotal = document.getElementById('cartTotal');
+      var cartFooter = document.getElementById('cartFooter');
+      var cartEmpty = document.getElementById('cartEmpty');
+
+      var totalItems = cart.reduce(function(sum, item) { return sum + item.qty; }, 0);
+      var totalPrice = cart.reduce(function(sum, item) { return sum + (item.price * item.qty); }, 0);
+
+      cartCount.textContent = totalItems;
+      cartCount.classList.toggle('empty', totalItems === 0);
+
+      if (cart.length === 0) {
+        cartFooter.style.display = 'none';
+        cartItems.innerHTML = '<div class="cart-empty"><span>🛒</span><p>Seu carrinho está vazio</p><p style="font-size:12px;margin-top:5px;">Adicione itens do cardápio</p></div>';
+        return;
+      }
+
+      cartFooter.style.display = 'block';
+
+      var html = '';
+      cart.forEach(function(item, index) {
+        html += '<div class="cart-item">' +
+          '<div class="cart-item-icon">' + item.icon + '</div>' +
+          '<div class="cart-item-info">' +
+            '<div class="cart-item-name">' + item.name + '</div>' +
+            '<div class="cart-item-price">R$ ' + item.price.toFixed(2).replace('.', ',') + '</div>' +
+          '</div>' +
+          '<div class="cart-item-qty">' +
+            '<button onclick="changeQty(' + index + ', -1)">-</button>' +
+            '<span>' + item.qty + '</span>' +
+            '<button onclick="changeQty(' + index + ', 1)">+</button>' +
+          '</div>' +
+          '<button class="cart-item-remove" onclick="removeItem(' + index + ')">✕</button>' +
+        '</div>';
+      });
+
+      cartItems.innerHTML = html;
+      cartTotal.textContent = 'R$ ' + totalPrice.toFixed(2).replace('.', ',');
+    }
+
+    // Alterar quantidade
+    function changeQty(index, delta) {
+      cart[index].qty += delta;
+      if (cart[index].qty <= 0) {
+        cart.splice(index, 1);
+      }
+      updateCartUI();
+    }
+
+    // Remover item
+    function removeItem(index) {
+      cart.splice(index, 1);
+      updateCartUI();
+    }
+
+    // Abrir carrinho
+    function openCart() {
+      document.getElementById('cartSidebar').classList.add('open');
+      document.getElementById('cartOverlay').classList.add('show');
+      document.body.style.overflow = 'hidden';
+    }
+
+    // Fechar carrinho
+    function closeCart() {
+      document.getElementById('cartSidebar').classList.remove('open');
+      document.getElementById('cartOverlay').classList.remove('show');
+      document.body.style.overflow = '';
+    }
+
+    // Finalizar pelo WhatsApp
+    function checkoutWhatsApp() {
+      if (cart.length === 0) return;
+
+      var message = 'Olá! Gostaria de fazer um pedido:\n\n';
+      cart.forEach(function(item) {
+        message += '• ' + item.name + ' (Qtd: ' + item.qty + ') - R$ ' + (item.price * item.qty).toFixed(2).replace('.', ',') + '\n';
+      });
+
+      var total = cart.reduce(function(sum, item) { return sum + (item.price * item.qty); }, 0);
+      message += '\n*Total: R$ ' + total.toFixed(2).replace('.', ',') + '*';
+
+      var encodedMessage = encodeURIComponent(message);
+      window.open('https://wa.me/5583996965591?text=' + encodedMessage, '_blank');
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>La Jullia Massas | Massas Artesanais para Pizzas</title>
+  <meta name="description" content="La Jullia Massas - Massas artesanais para pizzas irresistíveis. Tradição de família, sabor e qualidade.">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍕</text></svg>">
+</head>
+<body>
+
+  <div class="preloader">
+    <div class="preloader-pizza">🍕</div>
+    <div class="preloader-text">LA JULLIA MASSAS</div>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav class="navbar" id="navbar">
+    <a href="#" class="nav-logo">
+      <img src="imagens/logo.png" alt="La Jullia Massas">
+      <div class="nav-logo-text">La Jullia<span>Massas</span></div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#inicio" class="active">Início</a></li>
+      <li><a href="cardapio.html">Cardápio</a></li>
+      <li><a href="#portfolio">Portfólio</a></li>
+      <li><a href="#sobre">Sobre</a></li>
+      <li><a href="#contato">Contato</a></li>
+    </ul>
+    <a href="https://wa.me/5583996965591" target="_blank" class="nav-whatsapp">
+      <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      WhatsApp
+    </a>
+    <button class="nav-hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero" id="inicio">
+    <div class="hero-content">
+      <div class="hero-badge">
+        <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        Massas Artesanais
+      </div>
+      <h1>A BASE PERFEITA PARA UMA PIZZA <span class="highlight">inesquecível.</span></h1>
+      <p class="hero-desc">Massas de qualidade, preparadas para você montar sua pizza do seu jeito. Tradição de família com sabor artesanal.</p>
+      <div class="hero-buttons">
+        <a href="https://wa.me/5583996965591" target="_blank" class="hero-btn hero-btn-primary">
+          <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          Pedir pelo WhatsApp
+        </a>
+        <a href="#portfolio" class="hero-btn hero-btn-secondary">
+          <svg viewBox="0 0 24 24" style="fill:#fff;width:18px;height:18px;"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
+          Ver Nosso Portfólio
+        </a>
+      </div>
+    </div>
+    <div class="hero-image">
+      <img src="imagens/pao de alho.jpeg" alt="Pão de alho artesanal La Jullia">
+    </div>
+  </section>
+
+  <!-- NOSSAS MASSAS -->
+  <section class="section massas-section" id="massas">
+    <div class="section-header">
+      <span class="wheat">🌿</span>
+      <h2>Nossas Massas</h2>
+      <p>Massas feitas com ingredientes selecionados para oferecer sabor, praticidade e qualidade para você.</p>
+    </div>
+    <div class="massas-grid">
+      <div class="massa-card fade-up">
+        <div class="massa-card-img-wrap">
+          <img class="massa-card-img" src="imagens/WhatsApp Image 2026-08-24 at 13.10.15.jpeg" alt="Massa Tradicional">
+          <div class="massa-card-badge">🌿</div>
+        </div>
+        <div class="massa-card-body">
+          <h3>Massa Tradicional</h3>
+          <p>Massa leve e versátil para pizzas clássicas do dia a dia.</p>
+          <a href="cardapio.html" class="massa-card-btn">SAIBA MAIS</a>
+        </div>
+      </div>
+      <div class="massa-card fade-up" style="transition-delay:0.1s">
+        <div class="massa-card-img-wrap">
+          <img class="massa-card-img" src="imagens/WhatsApp Image 2026-08-24 at 13.12.03.jpeg" alt="Massa Artesanal">
+          <div class="massa-card-badge">🌿</div>
+        </div>
+        <div class="massa-card-body">
+          <h3>Massa Artesanal</h3>
+          <p>Textura diferenciada e sabor mais marcante.</p>
+          <a href="cardapio.html" class="massa-card-btn">SAIBA MAIS</a>
+        </div>
+      </div>
+      <div class="massa-card fade-up" style="transition-delay:0.2s">
+        <div class="massa-card-img-wrap">
+          <img class="massa-card-img" src="imagens/WhatsApp Image 2026-08-24 at 13.18.11.jpeg" alt="Massa Grande">
+          <div class="massa-card-badge">🌿</div>
+        </div>
+        <div class="massa-card-body">
+          <h3>Massa Grande</h3>
+          <p>Ideal para pizzas maiores e reuniões em família.</p>
+          <a href="cardapio.html" class="massa-card-btn">SAIBA MAIS</a>
+        </div>
+      </div>
+      <div class="massa-card fade-up" style="transition-delay:0.3s">
+        <div class="massa-card-img-wrap">
+          <img class="massa-card-img" src="imagens/WhatsApp Image 2026-08-24 at 13.20.14.jpeg" alt="Massa Individual">
+          <div class="massa-card-badge">🌿</div>
+        </div>
+        <div class="massa-card-body">
+          <h3>Massa Individual</h3>
+          <p>Prática e no tamanho certo para sua pizza.</p>
+          <a href="cardapio.html" class="massa-card-btn">SAIBA MAIS</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PORTFÓLIO -->
+  <section class="portfolio-section" id="portfolio">
+    <div class="section-header">
+      <span class="wheat">🌿</span>
+      <h2>Portfólio</h2>
+      <p>Pizzas que começam com uma boa massa.</p>
+    </div>
+    <div class="portfolio-grid">
+      <div class="portfolio-item" onclick="openLightbox('imagens/WhatsApp Image 2026-08-24 at 13.10.15.jpeg')"><img src="imagens/WhatsApp Image 2026-08-24 at 13.10.15.jpeg" alt="Produto" loading="lazy"></div>
+      <div class="portfolio-item" onclick="openLightbox('imagens/WhatsApp Image 2026-08-24 at 13.12.03.jpeg')"><img src="imagens/WhatsApp Image 2026-08-24 at 13.12.03.jpeg" alt="Produto" loading="lazy"></div>
+      <div class="portfolio-item" onclick="openLightbox('imagens/WhatsApp Image 2026-08-24 at 13.18.11.jpeg')"><img src="imagens/WhatsApp Image 2026-08-24 at 13.18.11.jpeg" alt="Produto" loading="lazy"></div>
+      <div class="portfolio-item" onclick="openLightbox('imagens/WhatsApp Image 2026-08-24 at 13.19.04.jpeg')"><img src="imagens/WhatsApp Image 2026-08-24 at 13.19.04.jpeg" alt="Produto" loading="lazy"></div>
+      <div class="portfolio-item" onclick="openLightbox('imagens/WhatsApp Image 2026-08-24 at 13.20.14.jpeg')"><img src="imagens/WhatsApp Image 2026-08-24 at 13.20.14.jpeg" alt="Produto" loading="lazy"></div>
+      <div class="portfolio-item" onclick="openLightbox('imagens/WhatsApp Image 2026-08-24 at 13.41.16.jpeg')"><img src="imagens/WhatsApp Image 2026-08-24 at 13.41.16.jpeg" alt="Produto" loading="lazy"></div>
+    </div>
+    <div style="text-align:center">
+      <a href="portfolio.html" class="portfolio-btn">VER PORTFÓLIO COMPLETO →</a>
+    </div>
+  </section>
+
+  <!-- SOBRE -->
+  <section class="section sobre-section" id="sobre">
+    <div class="sobre-grid">
+      <div class="sobre-img fade-left">
+        <img src="imagens/WhatsApp Image 2026-08-24 at 13.19.04.jpeg" alt="Massa sendo preparada">
+      </div>
+      <div class="sobre-text fade-right">
+        <h3>🌿 Sobre a La Jullia Massas</h3>
+        <h2><em>Feita para transformar cada pizza</em> em um momento especial.</h2>
+        <p>Nossas massas são produzidas com ingredientes selecionados e muito cuidado em cada etapa. Unimos tradição e qualidade para levar até você uma massa saborosa, leve e fácil de preparar.</p>
+        <div class="sobre-features">
+          <div class="sobre-feature">
+            <div class="sobre-feature-icon">🌾</div>
+            <p>Massa de Qualidade</p>
+          </div>
+          <div class="sobre-feature">
+            <div class="sobre-feature-icon">👨‍🍳</div>
+            <p>Produção Cuidadosa</p>
+          </div>
+          <div class="sobre-feature">
+            <div class="sobre-feature-icon">🌿</div>
+            <p>Ingredientes Selecionados</p>
+          </div>
+          <div class="sobre-feature">
+            <div class="sobre-feature-icon">❤️</div>
+            <p>Sabor e Praticidade</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section" id="contato">
+    <h2>Que tal preparar sua próxima pizza?</h2>
+    <p>Escolha sua massa, monte sua pizza e aproveite.</p>
+    <a href="https://wa.me/5583996965591" target="_blank" class="cta-btn">
+      <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      FALE CONOSCO PELO WHATSAPP
+    </a>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="#" class="nav-logo">
+          <img src="imagens/logo.png" alt="La Jullia Massas">
+          <div class="nav-logo-text">La Jullia<span>Massas</span></div>
+        </a>
+        <p>Massas artesanais para pizzas irresistíveis. Tradição de família com sabor e qualidade.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Navegação</h4>
+        <ul>
+          <li><a href="#inicio">Início</a></li>
+          <li><a href="cardapio.html">Cardápio</a></li>
+          <li><a href="#portfolio">Portfólio</a></li>
+          <li><a href="#sobre">Sobre</a></li>
+          <li><a href="#contato">Contato</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Contato</h4>
+        <div class="footer-contact-item">
+          <svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+          <a href="https://wa.me/5583996965591" target="_blank">(83) 99696-5559</a>
+        </div>
+        <div class="footer-contact-item">
+          <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+          <a href="https://instagram.com/lajulliamassas" target="_blank">@lajulliamassas</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Onde Estamos</h4>
+        <div class="footer-contact-item">
+          <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+          <span>Rua Mamede Moises Raia, 241<br>Monte Castelo</span>
+        </div>
+        <a href="https://www.google.com/maps/search/rua+mamede+moises+raia+241+monte+castelo" target="_blank" style="color:var(--amber-gold);font-size:13px;text-decoration:none;font-weight:600;">VER NO MAPA</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      &copy; 2026 La Jullia Massas. Todos os direitos reservados.
+    </div>
+  </footer>
+
+  <!-- FLOATING WHATSAPP -->
+  <a href="https://wa.me/5583996965591" target="_blank" class="whatsapp-float" aria-label="WhatsApp">
+    <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+  </a>
+
+  <!-- LIGHTBOX -->
+  <div class="lightbox" id="lightbox">
+    <button class="lightbox-close">&times;</button>
+    <img id="lightbox-img" src="" alt="Imagem ampliada">
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

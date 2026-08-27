@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portfólio | La Jullia Massas</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍕</text></svg>">
+  <style>
+    .page-hero { background: var(--olive-leaf); padding: 120px 40px 60px; text-align: center; }
+    .page-hero h1 { font-family: 'Playfair Display', serif; font-size: 40px; color: #fff; margin-bottom: 8px; }
+    .page-hero p { color: var(--amber-gold); font-size: 15px; }
+    .page-hero .back-link { display: inline-flex; align-items: center; gap: 6px; color: var(--amber-gold); text-decoration: none; font-size: 14px; margin-bottom: 12px; transition: opacity 0.3s; }
+    .page-hero .back-link:hover { opacity: 0.7; }
+
+    .portfolio-main { max-width: 1200px; margin: 0 auto; padding: 40px 24px; }
+
+    .portfolio-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .portfolio-item { border-radius: 16px; overflow: hidden; background: #fff; box-shadow: var(--shadow); cursor: pointer; transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; }
+    .portfolio-item:hover { transform: translateY(-10px) rotateX(5deg); box-shadow: 0 30px 50px rgba(0,0,0,0.2); }
+    .portfolio-item img { width: 100%; aspect-ratio: 4/3; object-fit: cover; display: block; transition: transform 0.6s; }
+    .portfolio-item:hover img { transform: scale(1.08); }
+    .portfolio-item .item-overlay { position: absolute; inset: 0; background: linear-gradient(transparent 50%, rgba(139,0,0,0.9)); display: flex; flex-direction: column; justify-content: flex-end; padding: 20px; opacity: 0; transition: opacity 0.4s; }
+    .portfolio-item:hover .item-overlay { opacity: 1; }
+    .portfolio-item .item-overlay h4 { color: #fff; font-family: 'Playfair Display', serif; font-size: 18px; margin-bottom: 5px; }
+    .portfolio-item .item-overlay p { color: rgba(255,255,255,0.8); font-size: 12px; }
+    .portfolio-item .item-icon { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0); width: 60px; height: 60px; background: rgba(255,255,255,0.9); border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
+    .portfolio-item:hover .item-icon { transform: translate(-50%, -50%) scale(1); }
+    .portfolio-item .item-icon span { font-size: 24px; }
+
+    .lightbox { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; align-items: center; justify-content: center; padding: 40px; }
+    .lightbox.active { display: flex; animation: lightboxIn 0.5s ease; }
+    @keyframes lightboxIn { from { opacity: 0; } to { opacity: 1; } }
+    .lightbox img { max-width: 90%; max-height: 85vh; border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,0.5); animation: lightboxImgIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s both; transition: opacity 0.3s, transform 0.3s; }
+    @keyframes lightboxImgIn { from { opacity: 0; transform: scale(0.8) translateY(30px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+    .lightbox-close { position: absolute; top: 20px; right: 20px; background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.3); color: #fff; font-size: 32px; cursor: pointer; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all 0.3s; }
+    .lightbox-close:hover { background: var(--brick-ember); border-color: var(--brick-ember); transform: rotate(90deg); }
+    .lightbox-nav { position: absolute; top: 50%; transform: translateY(-50%); width: 60px; height: 60px; background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.3); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s; color: #fff; font-size: 24px; }
+    .lightbox-nav:hover { background: var(--brick-ember); border-color: var(--brick-ember); }
+    .lightbox-prev { left: 20px; }
+    .lightbox-next { right: 20px; }
+    .lightbox-counter { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); color: #fff; font-size: 14px; background: rgba(0,0,0,0.5); padding: 8px 20px; border-radius: 20px; }
+
+    @media (max-width: 900px) {
+      .portfolio-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 500px) {
+      .portfolio-grid { grid-template-columns: 1fr; }
+      .lightbox-nav { width: 40px; height: 40px; font-size: 18px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="preloader">
+    <div class="preloader-pizza">📸</div>
+    <div class="preloader-text">PORTFÓLIO</div>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav class="navbar" id="navbar">
+    <a href="index.html" class="nav-logo">
+      <img src="imagens/logo.png" alt="La Jullia Massas">
+      <div class="nav-logo-text">La Jullia<span>Massas</span></div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html#inicio">Início</a></li>
+      <li><a href="cardapio.html">Cardápio</a></li>
+      <li><a href="portfolio.html" class="active">Portfólio</a></li>
+      <li><a href="index.html#sobre">Sobre</a></li>
+      <li><a href="index.html#contato">Contato</a></li>
+    </ul>
+    <a href="https://wa.me/5583996965591" target="_blank" class="nav-whatsapp">
+      <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      WhatsApp
+    </a>
+    <button class="nav-hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- HEADER -->
+  <div class="page-hero">
+    <a href="index.html" class="back-link">← Voltar ao início</a>
+    <h1>📸 Nosso Portfólio</h1>
+    <p>Veja nossos trabalhos, massas e pizzas.</p>
+  </div>
+
+  <!-- GRID -->
+  <main class="portfolio-main">
+    <div class="portfolio-grid">
+      <div class="portfolio-item" onclick="openLightbox('imagens/WhatsApp Image 2026-08-24 at 13.10.15.jpeg')">
+        <img src="imagens/WhatsApp Image 2026-08-24 at 13.10.15.jpeg" alt="Massa artesanal" loading="lazy">
+        <div class="item-overlay"><h4>Massa Artesanal</h4><p>Tradição de família</p></div>
+        <div class="item-icon"><span>🔍</span></div>
+      </div>
+      <div class="portfolio-item" onclick="openLightbox('imagens/WhatsApp Image 2026-08-24 at 13.12.03.jpeg')">
+        <img src="imagens/WhatsApp Image 2026-08-24 at 13.12.03.jpeg" alt="Pizza pronta" loading="lazy">
+        <div class="item-overlay"><h4>Pizza Perfeita</h4><p>Sabor incomparável</p></div>
+        <div class="item-icon"><span>🔍</span></div>
+      </div>
+      <div class="portfolio-item" onclick="openLightbox('imagens/WhatsApp Image 2026-08-24 at 13.18.11.jpeg')">
+        <img src="imagens/WhatsApp Image 2026-08-24 at 13.18.11.jpeg" alt="Ingredientes frescos" loading="lazy">
+        <div class="item-overlay"><h4>Ingredientes Frescos</h4><p>Qualidade selecionada</p></div>
+        <div class="item-icon"><span>🔍</span></div>
+      </div>
+      <div class="portfolio-item" onclick="openLightbox('imagens/WhatsApp Image 2026-08-24 at 13.19.04.jpeg')">
+        <img src="imagens/WhatsApp Image 2026-08-24 at 13.19.04.jpeg" alt="Massa sendo preparada" loading="lazy">
+        <div class="item-overlay"><h4>Preparação Artesanal</h4><p>Feito à mão</p></div>
+        <div class="item-icon"><span>🔍</span></div>
+      </div>
+      <div class="portfolio-item" onclick="openLightbox('imagens/WhatsApp Image 2026-08-24 at 13.20.14.jpeg')">
+        <img src="imagens/WhatsApp Image 2026-08-24 at 13.20.14.jpeg" alt="Receita Excepcional" loading="lazy">
+        <div class="item-overlay"><h4>Receita Excepcional</h4><p>Nossa especialidade</p></div>
+        <div class="item-icon"><span>🔍</span></div>
+      </div>
+      <div class="portfolio-item" onclick="openLightbox('imagens/WhatsApp Image 2026-08-24 at 13.23.37.jpeg')">
+        <img src="imagens/WhatsApp Image 2026-08-24 at 13.23.37.jpeg" alt="Fabricação própria" loading="lazy">
+        <div class="item-overlay"><h4>Fabricação Própria</h4><p>Controle total</p></div>
+        <div class="item-icon"><span>🔍</span></div>
+      </div>
+      <div class="portfolio-item" onclick="openLightbox('imagens/WhatsApp Image 2026-08-24 at 13.41.16.jpeg')">
+        <img src="imagens/WhatsApp Image 2026-08-24 at 13.41.16.jpeg" alt="Produto" loading="lazy">
+        <div class="item-overlay"><h4>Nossos Produtos</h4><p>Variedade e sabor</p></div>
+        <div class="item-icon"><span>🔍</span></div>
+      </div>
+      <div class="portfolio-item" onclick="openLightbox('imagens/WhatsApp Image 2026-08-24 at 13.41.25.jpeg')">
+        <img src="imagens/WhatsApp Image 2026-08-24 at 13.41.25.jpeg" alt="Produto" loading="lazy">
+        <div class="item-overlay"><h4>Qualidade Premium</h4><p>O melhor para você</p></div>
+        <div class="item-icon"><span>🔍</span></div>
+      </div>
+      <div class="portfolio-item" onclick="openLightbox('imagens/WhatsApp Image 2026-08-24 at 13.41.30.jpeg')">
+        <img src="imagens/WhatsApp Image 2026-08-24 at 13.41.30.jpeg" alt="Produto" loading="lazy">
+        <div class="item-overlay"><h4>Tradição e Sabor</h4><p>Legado familiar</p></div>
+        <div class="item-icon"><span>🔍</span></div>
+      </div>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="index.html" class="nav-logo">
+          <img src="imagens/logo.png" alt="La Jullia Massas">
+          <div class="nav-logo-text">La Jullia<span>Massas</span></div>
+        </a>
+        <p>Massas artesanais para pizzas irresistíveis.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Navegação</h4>
+        <ul>
+          <li><a href="index.html#inicio">Início</a></li>
+          <li><a href="cardapio.html">Cardápio</a></li>
+          <li><a href="portfolio.html">Portfólio</a></li>
+          <li><a href="index.html#sobre">Sobre</a></li>
+          <li><a href="index.html#contato">Contato</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Contato</h4>
+        <div class="footer-contact-item">
+          <svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+          <a href="https://wa.me/5583996965591" target="_blank">(83) 99696-5559</a>
+        </div>
+        <div class="footer-contact-item">
+          <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+          <a href="https://instagram.com/lajulliamassas" target="_blank">@lajulliamassas</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Onde Estamos</h4>
+        <div class="footer-contact-item">
+          <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+          <span>Rua Mamede Moises Raia, 241<br>Monte Castelo</span>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">&copy; 2026 La Jullia Massas. Todos os direitos reservados.</div>
+  </footer>
+
+  <!-- FLOATING WHATSAPP -->
+  <a href="https://wa.me/5583996965591" target="_blank" class="whatsapp-float" aria-label="WhatsApp">
+    <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+  </a>
+
+  <!-- LIGHTBOX -->
+  <div class="lightbox" id="lightbox">
+    <button class="lightbox-close">&times;</button>
+    <button class="lightbox-nav lightbox-prev" id="lightboxPrev">❮</button>
+    <button class="lightbox-nav lightbox-next" id="lightboxNext">❯</button>
+    <img id="lightbox-img" src="" alt="Imagem ampliada">
+    <div class="lightbox-counter" id="lightboxCounter">1 / 9</div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
