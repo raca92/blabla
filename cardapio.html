@@ -91,6 +91,31 @@
     .cart-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1999; display: none; }
     .cart-overlay.show { display: block; }
 
+    /* ENTREGA / RETIRADA */
+    .delivery-section { padding: 15px 20px; border-top: 1px solid #eee; background: #fff; }
+    .delivery-section label { font-size: 13px; font-weight: 600; color: var(--olive-leaf); display: block; margin-bottom: 8px; }
+    .delivery-toggle { display: flex; gap: 8px; }
+    .delivery-toggle button { flex: 1; padding: 10px 8px; border: 2px solid #ddd; background: #fff; border-radius: 12px; font-family: 'Poppins', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.3s; display: flex; flex-direction: column; align-items: center; gap: 4px; color: #666; }
+    .delivery-toggle button .toggle-icon { font-size: 20px; }
+    .delivery-toggle button.active { border-color: var(--brick-ember); background: rgba(46, 139, 46, 0.08); color: var(--brick-ember); }
+    .delivery-toggle button:hover:not(.active) { border-color: #aaa; }
+    .address-field { margin-top: 12px; display: none; animation: fadeInUp 0.3s ease; }
+    .address-field.show { display: block; }
+    .address-field input { width: 100%; padding: 10px 14px; border: 2px solid #ddd; border-radius: 10px; font-family: 'Poppins', sans-serif; font-size: 13px; transition: border-color 0.3s; outline: none; }
+    .address-field input:focus { border-color: var(--brick-ember); }
+    .address-field input::placeholder { color: #aaa; }
+    .freight-info { margin-top: 8px; font-size: 12px; color: var(--brick-ember); font-weight: 600; display: none; }
+    .freight-info.show { display: block; }
+
+    /* AUTOCOMPLETE ENDERECO */
+    .address-suggestions { position: absolute; top: 100%; left: 0; right: 0; background: #fff; border: 1px solid #ddd; border-top: none; border-radius: 0 0 10px 10px; box-shadow: 0 6px 20px rgba(0,0,0,0.15); z-index: 2500; max-height: 200px; overflow-y: auto; display: none; }
+    .address-suggestions.show { display: block; }
+    .address-suggestions .sug-item { padding: 10px 14px; font-family: 'Poppins', sans-serif; font-size: 13px; color: var(--dark-text); cursor: pointer; border-bottom: 1px solid #f0f0f0; transition: background 0.2s; }
+    .address-suggestions .sug-item:last-child { border-bottom: none; }
+    .address-suggestions .sug-item:hover { background: rgba(46, 139, 46, 0.08); }
+    .address-suggestions .sug-item .sug-icon { margin-right: 8px; }
+    .address-wrap { position: relative; }
+
     .cardapio-cta { text-align: center; margin-top: 50px; padding: 40px; background: linear-gradient(135deg, var(--olive-leaf), #2d5a1e); border-radius: 24px; color: #fff; position: relative; overflow: hidden; }
     .cardapio-cta::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M20 20c0-5.5-4.5-10-10-10S0 14.5 0 20s4.5 10 10 10 10-4.5 10-10zm20 0c0-5.5-4.5-10-10-10s-10 4.5-10 10 4.5 10 10 10 10-4.5 10-10z'/%3E%3C/g%3E%3C/svg%3E"); }
     .cardapio-cta h3 { font-family: 'Playfair Display', serif; font-size: 28px; margin-bottom: 10px; position: relative; }
@@ -538,6 +563,27 @@
       </div>
     </div>
     <div class="cart-footer" id="cartFooter" style="display:none;">
+      <div class="delivery-section">
+        <label>Como vai receber?</label>
+        <div class="delivery-toggle">
+          <button id="btnRetirada" class="active" onclick="setDelivery('retirada')">
+            <span class="toggle-icon">🏪</span>
+            Retirada
+          </button>
+          <button id="btnEntrega" onclick="setDelivery('entrega')">
+            <span class="toggle-icon">🚚</span>
+            Entrega
+          </button>
+        </div>
+        <div class="address-field" id="addressField">
+          <div class="address-wrap">
+            <input type="text" id="addressInput" placeholder="Rua, bairro, cidade..." autocomplete="off" oninput="onAddressInput()" onfocus="onAddressInput()">
+            <div class="address-suggestions" id="addressSuggestions"></div>
+          </div>
+          <input type="text" id="addressNumber" placeholder="Numero" style="margin-top:8px;" oninput="updateTotal()">
+        </div>
+        <div class="freight-info" id="freightInfo">+ R$ 5,00 de frete</div>
+      </div>
       <div class="cart-total">
         <span>Total:</span>
         <span id="cartTotal">R$ 0,00</span>
@@ -553,6 +599,8 @@
   <script>
     // Carrinho
     var cart = [];
+    var deliveryType = 'retirada';
+    var FRETE = 5;
 
     // Tabs do cardápio
     var tabs = document.querySelectorAll('.cardapio-tab');
@@ -616,6 +664,38 @@
       updateCartUI();
     }
 
+    // Alterar tipo de entrega
+    function setDelivery(type) {
+      deliveryType = type;
+      var btnRetirada = document.getElementById('btnRetirada');
+      var btnEntrega = document.getElementById('btnEntrega');
+      var addressField = document.getElementById('addressField');
+      var freightInfo = document.getElementById('freightInfo');
+
+      if (type === 'entrega') {
+        btnEntrega.classList.add('active');
+        btnRetirada.classList.remove('active');
+        addressField.classList.add('show');
+        freightInfo.classList.add('show');
+      } else {
+        btnRetirada.classList.add('active');
+        btnEntrega.classList.remove('active');
+        addressField.classList.remove('show');
+        freightInfo.classList.remove('show');
+      }
+      updateTotal();
+    }
+
+    // Calcular e atualizar total
+    function updateTotal() {
+      var cartTotal = document.getElementById('cartTotal');
+      var total = cart.reduce(function(sum, item) { return sum + (item.price * item.qty); }, 0);
+      if (deliveryType === 'entrega') {
+        total += FRETE;
+      }
+      cartTotal.textContent = 'R$ ' + total.toFixed(2).replace('.', ',');
+    }
+
     // Atualizar UI do carrinho
     function updateCartUI() {
       var cartItems = document.getElementById('cartItems');
@@ -625,7 +705,6 @@
       var cartEmpty = document.getElementById('cartEmpty');
 
       var totalItems = cart.reduce(function(sum, item) { return sum + item.qty; }, 0);
-      var totalPrice = cart.reduce(function(sum, item) { return sum + (item.price * item.qty); }, 0);
 
       cartCount.textContent = totalItems;
       cartCount.classList.toggle('empty', totalItems === 0);
@@ -656,7 +735,7 @@
       });
 
       cartItems.innerHTML = html;
-      cartTotal.textContent = 'R$ ' + totalPrice.toFixed(2).replace('.', ',');
+      updateTotal();
     }
 
     // Alterar quantidade
@@ -698,11 +777,98 @@
       });
 
       var total = cart.reduce(function(sum, item) { return sum + (item.price * item.qty); }, 0);
-      message += '\n*Total: R$ ' + total.toFixed(2).replace('.', ',') + '*';
+
+      message += '\n*Forma de recebimento: ' + (deliveryType === 'entrega' ? 'Entrega' : 'Retirada') + '*';
+
+      if (deliveryType === 'entrega') {
+        total += FRETE;
+        message += '\n*Frete: R$ ' + FRETE.toFixed(2).replace('.', ',') + '*';
+        var address = document.getElementById('addressInput').value.trim();
+        var number = document.getElementById('addressNumber').value.trim();
+        if (address) {
+          if (number) {
+            message += '\n*Endereco:* ' + address.split(',')[0] + ', ' + number + ' - ' + address.split(',').slice(1).join(',').trim();
+          } else {
+            message += '\n*Endereco:* ' + address;
+          }
+        } else {
+          message += '\n*Endereco:* (nao informado)';
+        }
+      }
+
+      message += '\n\n*Total: R$ ' + total.toFixed(2).replace('.', ',') + '*';
 
       var encodedMessage = encodeURIComponent(message);
       window.open('https://wa.me/5583996965591?text=' + encodedMessage, '_blank');
     }
+
+    // Autocomplete endereco via Nominatim (OpenStreetMap - gratuito)
+    var addressTimeout;
+    var addressCache = {};
+
+    function onAddressInput() {
+      var input = document.getElementById('addressInput');
+      var sugBox = document.getElementById('addressSuggestions');
+      var val = input.value.trim();
+
+      if (val.length < 3) {
+        sugBox.classList.remove('show');
+        return;
+      }
+
+      clearTimeout(addressTimeout);
+      addressTimeout = setTimeout(function() {
+        if (addressCache[val]) {
+          showSuggestions(addressCache[val]);
+          return;
+        }
+        var cgLat = -7.2306, cgLon = -35.8811;
+        var vb = (cgLon - 0.15) + ',' + (cgLat + 0.15) + ',' + (cgLon + 0.15) + ',' + (cgLat - 0.15);
+        fetch('https://nominatim.openstreetmap.org/search?q=' + encodeURIComponent(val + ', Campina Grande, Paraiba, Brasil') + '&format=json&addressdetails=1&limit=5&countrycodes=br&viewbox=' + vb + '&bounded=0', {
+          headers: { 'Accept-Language': 'pt-BR' }
+        })
+        .then(function(res) { return res.json(); })
+        .then(function(data) {
+          addressCache[val] = data;
+          showSuggestions(data);
+        })
+        .catch(function() {
+          sugBox.classList.remove('show');
+        });
+      }, 400);
+    }
+
+    function showSuggestions(results) {
+      var sugBox = document.getElementById('addressSuggestions');
+      if (!results || results.length === 0) {
+        sugBox.classList.remove('show');
+        return;
+      }
+      var html = '';
+      results.forEach(function(r) {
+        html += '<div class="sug-item" onclick="selectSuggestion(this)" data-address="' + r.display_name.replace(/"/g, '&quot;') + '">' +
+          '<span class="sug-icon">📍</span>' + r.display_name +
+        '</div>';
+      });
+      sugBox.innerHTML = html;
+      sugBox.classList.add('show');
+    }
+
+    function selectSuggestion(el) {
+      var input = document.getElementById('addressInput');
+      var sugBox = document.getElementById('addressSuggestions');
+      input.value = el.getAttribute('data-address');
+      sugBox.classList.remove('show');
+      updateTotal();
+    }
+
+    // Fechar sugestoes ao clicar fora
+    document.addEventListener('click', function(e) {
+      var wrap = document.querySelector('.address-wrap');
+      if (wrap && !wrap.contains(e.target)) {
+        document.getElementById('addressSuggestions').classList.remove('show');
+      }
+    });
   </script>
 </body>
 </html>
